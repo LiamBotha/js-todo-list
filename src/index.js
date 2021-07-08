@@ -77,22 +77,6 @@ const app = (() => {
         }
 
         displayArea.appendChild(listBoxDiv);
-
-        let addBtn = document.createElement("button");
-        addBtn.textContent = "Add List +";
-
-        addBtn.addEventListener("click", (e) => {
-            let newList = createList("New List", refreshEvent);
-
-            todoLists.push(newList);
-
-            renderLists();
-            renderSidebar();
-
-            newList.focus();
-        });
-
-        displayArea.appendChild(addBtn);
     }
 
     renderLists();

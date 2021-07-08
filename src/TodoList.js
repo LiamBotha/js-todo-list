@@ -11,6 +11,65 @@ const createList = (listName, event) => {
         itemList.push(item);
     };
 
+    function newItemPrompt(self, listElem) {
+        let btns = document.querySelectorAll(".add-btn")
+        for(let i = 0; i < btns.length; i++) btns[i].remove();
+
+        let createItemElem = document.createElement("div");
+        let createTitleInputElem = document.createElement("input");
+        let createDescInputElem = document.createElement("div");
+        let createSaveBtn = document.createElement("button");
+        let createDeleteBtn = document.createElement("button");
+        
+        let createDateInputElem = document.createElement("input");
+        let createPriorityInputElem = document.createElement("input");
+        
+        createDescInputElem.contentEditable = true;
+        createDateInputElem.type = "date";
+        createPriorityInputElem.type = "number";
+        createPriorityInputElem.valueAsNumber = 0;
+
+        createItemElem.style = "position: relative; background: rgb(255, 238, 109); padding: 1rem 1rem 2rem; width: 275px; min-height: 150px; border: 1px solid #cfcfcf; box-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin: 1rem 0";
+        createItemElem.style.display="flex";
+        createItemElem.style.flexDirection = "column";
+
+        createTitleInputElem.style = "background: transparent; border: 1px dashed black; margin-bottom: 0.5rem; outline: none";
+        createDescInputElem.style.flexGrow="1";
+        createDescInputElem.style.overflowWrap = "anywhere";
+        createDescInputElem.style.border = "1px dashed black";
+        createDescInputElem.style.outline = "none";
+
+        createDateInputElem.style = "position: absolute; bottom: 5px; left: 5px; font-size: 0.8rem";
+        createPriorityInputElem.style = "position: absolute; bottom: 5px; right: 5px; font-size: 0.8rem; width: 2.3rem";
+
+        createTitleInputElem.value = "Title";
+        createDescInputElem.textContent = "Description";
+
+        createSaveBtn.textContent = "Save";
+        createDeleteBtn.textContent = "Delete";
+
+        createSaveBtn.addEventListener("click", (e) => {
+            if(createDateInputElem.valueAsDate == null) return;
+
+            self.appendItem(createTodo(createTitleInputElem.value, createDescInputElem.innerText, createDateInputElem.valueAsDate.toDateString(), createPriorityInputElem.valueAsNumber));
+            console.log(createDescInputElem.innerText);
+            dispatchEvent(refreshEvent);
+        });
+
+        createDeleteBtn.addEventListener("click", (e) => {
+            dispatchEvent(refreshEvent);
+        });
+
+        createItemElem.appendChild(createTitleInputElem);
+        createItemElem.appendChild(createDescInputElem);
+        createItemElem.appendChild(createDateInputElem);
+        createItemElem.appendChild(createPriorityInputElem);
+        listElem.appendChild(createItemElem).scrollIntoView();
+
+        listElem.appendChild(createSaveBtn);
+        listElem.appendChild(createDeleteBtn);
+    };
+
     function renderList(todoLists, index) {
         itemList.sort((a, b) => a.priority - b.priority);
 
@@ -38,7 +97,7 @@ const createList = (listName, event) => {
         }
         else {
             titleInputElem.value = name;
-            titleInputElem.style = "font-size: 1.2rem; font-weight: bold; background: transparent; color: black; border: 1px solid white; margin: 16px 0";
+            titleInputElem.style = "font-size: 1.2rem; font-weight: bold; background: transparent; color: black; border: 1px dashed black; margin: 16px 0";
             titleInputElem.addEventListener("blur", (e) => {
                 bEditTitle = false;
                 name = e.target.value;
@@ -57,54 +116,7 @@ const createList = (listName, event) => {
         let addBtn = document.createElement("button");
         addBtn.textContent = "Add Item +";
         addBtn.classList.add("add-btn");
-        addBtn.addEventListener("click", (e) => {
-            //self.appendItem(createTodo("new", "test desc new", 2021, 1));
-            //let parent = e.target.parentNode;
-            //parent.textContent = "";
-            //parent.replaceWith(self.renderList());
-
-            //e.target.remove();
-            let btns = document.querySelectorAll(".add-btn")
-
-            for(let i = 0; i < btns.length; i++) btns[i].remove();
-
-            let createItemElem = document.createElement("div");
-            let createTitleInputElem = document.createElement("input");
-            let createDescInputElem = document.createElement("div");
-            let createSaveBtn = document.createElement("button");
-            let createDeleteBtn = document.createElement("button");
-            
-            createDescInputElem.contentEditable = true;
-
-            createItemElem.style = "background: rgb(255, 238, 109); padding: 1rem; width: 275px; min-height: 150px; border: 1px solid #cfcfcf; box-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin: 1rem 0";
-            createItemElem.style.display="flex";
-            createItemElem.style.flexDirection = "column";
-
-            createTitleInputElem.style.marginBottom = "0.5rem";
-            createDescInputElem.style.flexGrow="1";
-            createDescInputElem.style.overflowWrap="anywhere";
-
-            createTitleInputElem.value = "Title";
-            createDescInputElem.textContent = "Description";
-
-            createSaveBtn.textContent = "Save";
-            createDeleteBtn.textContent = "Delete";
-
-            createSaveBtn.addEventListener("click", (e) => {
-                self.appendItem(createTodo(createTitleInputElem.value, createDescInputElem.textContent, 2021, 1));
-                dispatchEvent(refreshEvent);
-            });
-
-            createDeleteBtn.addEventListener("click", (e) => {
-                dispatchEvent(refreshEvent);
-            });
-
-            createItemElem.appendChild(createTitleInputElem);
-            createItemElem.appendChild(createDescInputElem);
-            createItemElem.appendChild(createSaveBtn);
-            createItemElem.appendChild(createDeleteBtn);
-            listElem.appendChild(createItemElem).focus();;
-        });
+        addBtn.addEventListener("click", () => {newItemPrompt(self, listElem)});
 
         listElem.appendChild(addBtn);
 
