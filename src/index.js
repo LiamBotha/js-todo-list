@@ -12,23 +12,62 @@ const app = (() => {
 
     document.querySelector("body").style = "background: #1f1f1f;";
 
-    let todo = createList("default", refreshEvent);
-    todo.appendItem(createTodo("Hello", "test desc H", 2020, 1, false));
-    todo.appendItem(createTodo("2", "test desc 1", 2020, 2, false));
-    todo.appendItem(createTodo("3", "test desc 2", 2020, 2, false));
-    todoLists.push(todo);
+    if(typeof(Storage) !== undefined) {
+        let storedData = JSON.parse(localStorage.getItem("todo-lists"));
 
-    let spareTodo = createList("spare", refreshEvent);
-    spareTodo.appendItem(createTodo("a", "test desc a", 2020, 1, false));
-    spareTodo.appendItem(createTodo("B", "test desc b", 2020, 3, false));
-    spareTodo.appendItem(createTodo("c", "test desc c", 2020, 2, false));
-    spareTodo.appendItem(createTodo("D", "test desc d", 2020, 4, true));
-    todoLists.push(spareTodo);
+        if(storedData != null)
+        {   
+            console.log(storedData);
+
+            for(let i =0; i < storedData.length; i++)
+            {
+                let data = storedData[i];
+
+                let todo = createList(data.name, refreshEvent);
+
+                for(let j = 0; j < data.itemList.length; j++)
+                {
+                    let item = data.itemList[j];
+                    todo.appendItem(createTodo(item.title, item.description, item.dueDate, item.priority));
+                }
+
+                todoLists.push(todo);
+            }
+        }
+        else {
+            let todo = createList("default", refreshEvent);
+            todo.appendItem(createTodo("Hello", "test desc H", 2020, 1, false));
+            todo.appendItem(createTodo("2", "test desc 1", 2020, 2, false));
+            todo.appendItem(createTodo("3", "test desc 2", 2020, 2, false));
+            todoLists.push(todo);
+        }
+    }
+    else {
+        let todo = createList("default", refreshEvent);
+        todo.appendItem(createTodo("Hello", "test desc H", 2020, 1, false));
+        todo.appendItem(createTodo("2", "test desc 1", 2020, 2, false));
+        todo.appendItem(createTodo("3", "test desc 2", 2020, 2, false));
+        todoLists.push(todo);
+    }
 
     addEventListener("refresh", () => {
         console.log("refresh");
         renderLists();
         renderSidebar();
+
+        if(typeof(Storage) != undefined)
+        {
+            let storageList = [];
+            for(let i = 0; i < todoLists.length; i++)
+            {
+                let storeName = todoLists[i].getName();
+                let storeItems = todoLists[i].getListData();
+    
+                storageList.push({ "name": storeName, "itemList": storeItems });
+            }
+    
+            localStorage.setItem("todo-lists", JSON.stringify(storageList));
+        }
     });
 
     sidebar.style = "position: fixed; top: 0; left: 0; width: 250px; height: 100vh; background: #3f3f3f; text-align:center; color: white; font-size: 1.3rem;";

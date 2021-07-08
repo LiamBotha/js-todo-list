@@ -1,7 +1,9 @@
-const createTodo = (title, description, dueDate, priority, completed) => {
+const createTodo = (title, description, dueDate, _priority, completed) => {
 
     let bIsCompleted = completed;
     let bIsEditing = false;
+    let priority = _priority;
+
 
     const displayTodo = (itemList, index) => {
 
@@ -52,6 +54,8 @@ const createTodo = (title, description, dueDate, priority, completed) => {
             dateEditInputElem.type = "date";
             priorityEditInputElem.type = "number";
 
+            priorityEditInputElem.setAttribute("id", "priority-input");
+
             item.style = "position: relative; background: rgb(255, 238, 109); padding: 1rem 1rem 2rem; width: 275px; min-height: 150px; border: 1px solid #cfcfcf; box-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin: 1rem 0";
             item.style.display="flex";
             item.style.flexDirection = "column";
@@ -72,8 +76,7 @@ const createTodo = (title, description, dueDate, priority, completed) => {
                 title = titleEditElem.value;
                 description = descrEditElem.innerText;
                 dueDate = dateEditInputElem.valueAsDate != null ? dateEditInputElem.valueAsDate.toDateString() : dueDate;
-                priority = priorityEditInputElem.valueAsNumber;
-                console.log(priorityEditInputElem.value);
+                priority = document.getElementById("priority-input").value
 
                 dispatchEvent(new Event("refresh"));
             });
@@ -108,9 +111,16 @@ const createTodo = (title, description, dueDate, priority, completed) => {
         item.appendChild(priorityElem);
 
         return item;
-    };  
+    };
+    
+    const getPriority = () => { return priority };
 
-    return { title, description, dueDate, priority, displayTodo };
+    const getItemData = () => {
+        let priority = getPriority();
+        return { title, description, dueDate, priority };
+    }
+
+    return { title, description, dueDate, priority, getPriority, displayTodo, getItemData };
 };
 
 export default createTodo;

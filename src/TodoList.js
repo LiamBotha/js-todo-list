@@ -71,7 +71,7 @@ const createList = (listName, event) => {
     };
 
     function renderList(todoLists, index) {
-        itemList.sort((a, b) => a.priority - b.priority);
+        itemList.sort((a, b) => a.getPriority() - b.getPriority());
 
         let listElem = document.createElement("div");
         let listTitleElem = document.createElement("h3");
@@ -128,7 +128,17 @@ const createList = (listName, event) => {
 
     const getName = () => { return name };
 
-    return { getName, itemList, appendItem, renderList };
+    const getListData = () => {
+        let listData = [];
+        for(let i = 0; i < itemList.length; i++)
+        {
+            listData.push(itemList[i].getItemData());
+        }
+
+        return listData;
+    };
+
+    return { getName, itemList, appendItem, renderList, getListData };
 };
 
 export default createList;
